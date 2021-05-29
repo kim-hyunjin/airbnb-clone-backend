@@ -1,13 +1,19 @@
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Room
-from .serializers import RoomSerializer
+from .serializers import BigRoomSerializer, RoomSerializer
 
 class ListRoomsView(ListAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+
+# url로 넘어오는 pk를 사용해 알아서 Room을 찾아준다.
+class SeeRoomView(RetrieveAPIView):
+    queryset = Room.objects.all()
+    serializer_class = BigRoomSerializer
+
 
 # class ListRoomsView(APIView):
 #     def get(self, request):
