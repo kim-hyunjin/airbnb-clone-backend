@@ -1,18 +1,26 @@
 from users.models import User
-from users.serializers import ReadUserSerializer
+from users.serializers import ReadUserSerializer, WriteUserSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 class MeView(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        if request.user.is_authenticated:
-            return Response(ReadUserSerializer(request.user).data)
+        return Response(ReadUserSerializer(request.user).data)
 
     def put(self, request):
-        pass
+        serializer = WriteUserSerializer(request.user, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response()
+
 
 @api_view(["GET"])
 def user_detail(request, pk):
