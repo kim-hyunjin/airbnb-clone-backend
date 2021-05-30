@@ -1,11 +1,11 @@
 from rooms.models import Room
 from rest_framework import serializers
-from users.serializers import UserSerializer
+from users.serializers import RelatedUserSerializer
 
 # ModelSerializer가 Meta에 명시한 모델을 보고, 명시한 필드를 serialize한다.
 class RoomSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer()
+    user = RelatedUserSerializer()
     
     class Meta:
         model = Room
