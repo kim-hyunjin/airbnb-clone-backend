@@ -36,12 +36,12 @@ class RoomsView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = WriteRoomSerializer(data=request.data)
-        if serializer.is_valid():
-            # create()나 update() 메소드를 직접 호출하면 안된다. 대신 save() 메소드를 호출하면 내부적으로 알아서 판단해 create또는 update를 호출한다.
-            room = serializer.save(user=request.user)
-            return Response(data=RoomSerializer(room).data, status=status.HTTP_200_OK)
-        else:
+        if not serializer.is_valid():
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # create()나 update() 메소드를 직접 호출하면 안된다. 대신 save() 메소드를 호출하면 내부적으로 알아서 판단해 create또는 update를 호출한다.
+        room = serializer.save(user=request.user)
+        return Response(data=RoomSerializer(room).data, status=status.HTTP_200_OK)
 
 class RoomView(APIView):
 
@@ -54,21 +54,33 @@ class RoomView(APIView):
 
     def get(self, request, pk):
         room = self.get_room(pk)
-        if room is not None:
-            serializer = RoomSerializer(room).data
-            return Response(serializer)
-        else:
+        if room is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request):
-        pass
+        serializer = RoomSerializer(room).data
+        return Response(serializer)
+
+    def put(self, request, pk):
+        room = self.get_room(pk)
+        if room is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if room.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = WriteRoomSerializer(room, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        room = serializer.save()       
+        return Response(RoomSerializer(room).data)
 
     def delete(self, request, pk):
         room = self.get_room(pk)
         if room.user != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
-        if room is not None:
-            room.delete()
-            return Response(status=status.HTTP_200_OK)
-        else:
+        if room is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        room.delete()
+        return Response(status=status.HTTP_200_OK)
