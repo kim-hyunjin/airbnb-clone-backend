@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .models import Room
-from .serializers import RoomSerializer, WriteRoomSerializer
+from .serializers import RoomSerializer
 
 # @api_view(["GET", "POST"])
 # def list_rooms(request):
@@ -35,7 +35,7 @@ class RoomsView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        serializer = WriteRoomSerializer(data=request.data)
+        serializer = RoomSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -68,7 +68,7 @@ class RoomView(APIView):
         if room.user != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
         
-        serializer = WriteRoomSerializer(room, data=request.data, partial=True)
+        serializer = RoomSerializer(room, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

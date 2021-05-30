@@ -10,11 +10,7 @@ class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         exclude = ("modified",)
-
-class WriteRoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Room
-        exclude = ("user", "modified", "created")
+        read_only_fields = ("user", "id", "created", "updated")
 
     def validate(self, data):
         if self.instance:
@@ -31,6 +27,27 @@ class WriteRoomSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Not enough time between changes")
         
         return data
+
+# class WriteRoomSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Room
+#         exclude = ("user", "modified", "created")
+
+#     def validate(self, data):
+#         if self.instance:
+#             # 인스턴스가 있음 - 업데이트 하는 경우
+#             # data에 값이 없다면 인스턴스의 값으로 기본값 설정
+#             check_in = data.get('check_in', self.instance.check_in)
+#             check_out = data.get('check_out', self.instance.check_out)
+#         else:
+#             # 인스턴스가 없음 - 새로 생성하는 경우
+#             check_in = data.get('check_in')
+#             check_out = data.get('check_out')
+            
+#         if check_in == check_out:
+#             raise serializers.ValidationError("Not enough time between changes")
+        
+#         return data
 
 # class WriteRoomSerializer(serializers.Serializer):
 
