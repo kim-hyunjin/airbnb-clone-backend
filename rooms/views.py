@@ -1,8 +1,10 @@
-# from rest_framework.decorators import api_view
 # from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework import pagination
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from .models import Room
 from .serializers import RoomSerializer
 
@@ -23,13 +25,18 @@ from .serializers import RoomSerializer
 #             return Response(data=RoomSerializer(room).data, status=status.HTTP_200_OK)
 #         else:
 #             return Response(dara=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+
+class OwnPagination(PageNumberPagination):
+    page_size = 20
+
 class RoomsView(APIView):
 
     def get(self, request):
+        paginator = OwnPagination()
         rooms = Room.objects.all()
-        serialized_rooms = RoomSerializer(rooms, many=True).data
-        return Response(data=serialized_rooms)
+        results = paginator.paginate_queryset(rooms, request)
+        serialized_rooms = RoomSerializer(results, many=True).data
+        return paginator.get_paginated_response(serialized_rooms)
 
     def post(self, request):
         if not request.user.is_authenticated:
@@ -84,3 +91,11 @@ class RoomView(APIView):
 
         room.delete()
         return Response(status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def room_search(request):
+    paginator = OwnPagination()
+    rooms = Room.objects.filter()
+    results = paginator.paginate_queryset(rooms, request)
+    serialized_room = RoomSerializer(results, many=True).data
+    return paginator.get_paginated_response(serialized_room)

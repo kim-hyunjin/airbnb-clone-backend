@@ -77,10 +77,10 @@ def login(request):
     password = request.data.get("password")
     if not username or not password:
         return Response(status=status.HTTP_400_BAD_REQUEST)
-        
+
     user = authenticate(username=username, password=password)
     if user is None:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-    encoded_jwt = encode({"id": user.pk}, settings.SECRET_KEY, algorithm="HS256")
+    encoded_jwt = encode({"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256")
     return Response(data={"token": encoded_jwt})
