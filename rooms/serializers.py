@@ -1,6 +1,11 @@
-from rooms.models import Room
+from rooms.models import Room, Photo
 from rest_framework import serializers
 from users.serializers import UserSerializer
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        exclude = ("room",)
 
 # ModelSerializer가 Meta에 명시한 모델을 보고, 명시한 필드를 serialize한다.
 class RoomSerializer(serializers.ModelSerializer):
@@ -8,6 +13,7 @@ class RoomSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     # Dinamic field - 유저에 따라 필드값이 달라짐
     is_fav = serializers.SerializerMethodField()
+    photos = PhotoSerializer(read_only=True, many=True)
     
     class Meta:
         model = Room
