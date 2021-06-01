@@ -5,7 +5,7 @@ from users.serializers import UserSerializer
 # ModelSerializer가 Meta에 명시한 모델을 보고, 명시한 필드를 serialize한다.
 class RoomSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer()
+    user = UserSerializer(read_only=True)
     # Dinamic field - 유저에 따라 필드값이 달라짐
     is_fav = serializers.SerializerMethodField()
     
@@ -13,6 +13,11 @@ class RoomSerializer(serializers.ModelSerializer):
         model = Room
         exclude = ("modified",)
         read_only_fields = ("user", "id", "created", "updated")
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        room = Room.objects.create(**validated_data, user=request.user)
+        return room
 
     def validate(self, data):
         if self.instance:
