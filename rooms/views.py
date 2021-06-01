@@ -127,5 +127,5 @@ def room_search(request):
         rooms = Room.objects.all()
         
     results = paginator.paginate_queryset(rooms, request)
-    serialized_room = RoomSerializer(results, many=True).data
+    serialized_room = RoomSerializer(results, many=True, context={"request": request}).data
     return paginator.get_paginated_response(serialized_room)
