@@ -11,6 +11,7 @@ black = "*"
 django = "*"
 pillow = "*"
 django-seed = "*"
+graphene-django = "*"
 
 [requires]
 python_version = "3.9.5"
