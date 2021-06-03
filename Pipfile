@@ -12,6 +12,7 @@ django = "*"
 pillow = "*"
 django-seed = "*"
 graphene-django = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.9.5"

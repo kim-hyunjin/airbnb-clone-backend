@@ -1,7 +1,7 @@
 import graphene
 from .types import UserType
 from .models import User
-from .mutations import CreateAccountMutation
+from .mutations import CreateAccountMutation, LoginMutation
 
 class Query(object):
     user = graphene.Field(UserType, id=graphene.Int(required=True))
@@ -11,3 +11,4 @@ class Query(object):
 
 class Mutation(object):
     create_account = CreateAccountMutation.Field()
+    login = LoginMutation.Field()
