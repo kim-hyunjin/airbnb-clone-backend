@@ -2,6 +2,7 @@ import graphene
 # from rooms.models import Room
 # from graphene_django import DjangoObjectType
 from rooms import schema as rooms_schema
+from users import schema as users_schema
 
 
 # class RoomType(DjangoObjectType):
@@ -17,7 +18,7 @@ from rooms import schema as rooms_schema
 
 #     def resolve_rooms(self, info):
 #         return Room.objects.all()
-class Query(rooms_schema.Query, graphene.ObjectType):
+class Query(rooms_schema.Query, users_schema.Query, graphene.ObjectType):
     pass
 
 class Mutation():
