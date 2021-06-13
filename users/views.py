@@ -48,7 +48,7 @@ class UsersViewSet(ModelViewSet):
     @action(detail=True)
     def favs(self, request, pk): # detail=True 인 경우 id값이 파라미터로 넘어온다.
         user = self.get_object() # 현재 뷰가 보여주는 object를 리턴
-        serialized_favs = RoomSerializer(user.favs.all(), many=True).data
+        serialized_favs = RoomSerializer(user.favs.all(), many=True, context={"request": request}).data
         return Response(serialized_favs)
 
     @favs.mapping.put # favs 액션에 put메소드 추가하기
