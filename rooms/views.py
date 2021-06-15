@@ -7,6 +7,7 @@
 from rest_framework.decorators import action, api_view
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
+from rest_framework.response import Response
 from .models import Room
 from .serializers import RoomSerializer
 from .permissions import IsOwner
@@ -56,10 +57,10 @@ class RoomViewSet(ModelViewSet):
         except ValueError:
             rooms = Room.objects.all()
             
-        paginator = self.paginator # ViewSet의 기본 페이지네이터 사용(PageNumberPaginator)
-        results = paginator.paginate_queryset(rooms, request)
-        serialized_room = RoomSerializer(results, many=True, context={"request": request}).data
-        return paginator.get_paginated_response(serialized_room)
+        # paginator = self.paginator # ViewSet의 기본 페이지네이터 사용(PageNumberPaginator)
+        # results = paginator.paginate_queryset(rooms, request)
+        serialized_room = RoomSerializer(rooms, many=True, context={"request": request}).data
+        return Response(serialized_room)
 
 # @api_view(["GET", "POST"])
 # def list_rooms(request):
