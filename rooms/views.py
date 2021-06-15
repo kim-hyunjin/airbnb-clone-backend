@@ -58,7 +58,7 @@ class RoomViewSet(ModelViewSet):
             
         paginator = self.paginator # ViewSet의 기본 페이지네이터 사용(PageNumberPaginator)
         results = paginator.paginate_queryset(rooms, request)
-        serialized_room = RoomSerializer(results, many=True).data
+        serialized_room = RoomSerializer(results, many=True, context={"request": request}).data
         return paginator.get_paginated_response(serialized_room)
 
 # @api_view(["GET", "POST"])
